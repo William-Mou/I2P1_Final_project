@@ -51,13 +51,14 @@ void game_scene_draw()
     character_draw();
     stars_draw();
     rocks_draw();
-    
 }
 void game_scene_destroy()
 {
+    rocks_destory();
+    stars_destory();
     for (int i = 0; i < 6; i++)
     {
-    al_destroy_bitmap(background_game[i]);
+        al_destroy_bitmap(background_game[i]);
     }
     character_destory();
 }

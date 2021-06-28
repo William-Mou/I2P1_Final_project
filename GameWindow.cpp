@@ -101,8 +101,10 @@ void game_update()
         }
         else if (window == 2)
         {
+
             judge_next_window = false;
             end_time = al_get_time();
+            game_scene_destroy();
             gg_scene_init();
             window = 3;
         }

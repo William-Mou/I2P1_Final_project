@@ -575,6 +575,31 @@ void character_draw()
         }
     }
 }
+
+void stars_destory()
+{
+    // destory star images
+    for (int star = 0; star < stars_count; star++)
+    {
+        for (int i = 1; i <= 3; i++)
+        {
+            al_destroy_bitmap(stars[star].img_move[i - 1]);
+        }
+    }
+}
+
+void rocks_destory()
+{
+    // destory rock images
+    for (int rock = 0; rock < rocks_count; rock++)
+    {
+        for (int i = 1; i <= 3; i++)
+        {
+            al_destroy_bitmap(rocks[rock].img_move[i - 1]);
+        }
+    }
+}
+
 void character_destory()
 {
     al_destroy_bitmap(chara.img_atk[0]);
@@ -582,4 +607,5 @@ void character_destory()
     al_destroy_bitmap(chara.img_move[0]);
     al_destroy_bitmap(chara.img_move[1]);
     al_destroy_sample_instance(chara.atk_Sound);
+
 }
