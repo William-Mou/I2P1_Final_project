@@ -2,7 +2,7 @@
 
 //ALLEGRO_FONT *font = NULL;
 ALLEGRO_BITMAP *background = NULL;
-ALLEGRO_BITMAP *background_game[5];
+ALLEGRO_BITMAP *background_game[6];
 
 // function of menu
 void menu_init()
@@ -41,7 +41,7 @@ void game_scene_init()
     for (int i = 0; i < 6; i++)
     {
         char temp[50];
-        sprintf(temp, "./image/stage%d.jpg", i);
+        sprintf(temp, "./image/gamestage%d.jpg", i);
         background_game[i] = al_load_bitmap(temp);
     }
 }
