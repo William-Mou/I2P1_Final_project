@@ -287,12 +287,11 @@ void stars_update()
                 else
                 {
                     stars[star].live = false;
-                    chara.speedX += 0.2;
-                    al_play_sample_instance(chara.starsound);
                     chara.speedX += 1;
-                    if (chara.speedX >= 2)
+                    al_play_sample_instance(chara.starsound);
+                    if (chara.speedX >= 5)
                     {
-                        chara.speedX = 2;
+                        chara.speedX = 5;
                     }
                 }
             }
@@ -380,10 +379,13 @@ void charater_update()
 
     if (key_state[ALLEGRO_KEY_A])
     {
-        printf("ALLEGRO_KEY_A\n");
+        printf("ALLEGRO_KEY_A %f\n", base_speed * chara.speedX);
         chara.dir = false;
-        chara.x -= base_speed;
-        chara.state = MOVE;
+        if (chara.x > 0)
+        {
+            chara.x -= base_speed * chara.speedX;
+            chara.state = MOVE;
+        }
     }
     /*else if (key_state[ALLEGRO_KEY_S])
     {
@@ -392,10 +394,13 @@ void charater_update()
     }*/
     else if (key_state[ALLEGRO_KEY_D])
     {
-        printf("ALLEGRO_KEY_D\n");
+        printf("ALLEGRO_KEY_D %f\n", base_speed * chara.speedX);
         chara.dir = true;
-        chara.x += base_speed;
-        chara.state = MOVE;
+        if (chara.x < WIDTH-chara.width)
+        {
+            chara.x += base_speed * chara.speedX;
+            chara.state = MOVE;
+        }
     }
     else if (key_state[ALLEGRO_KEY_SPACE])
     {
@@ -440,7 +445,7 @@ void charater_update()
         // speed up rock speed
         for (int rock = rocks_count - 1; rock >= 0; rock--)
         {
-            rocks[rock].speedX += 0.6;
+            rocks[rock].speedX += 0.8;
         }
     }
     else if ((int)(al_get_time() - play_time) % 5 == 2)
@@ -607,5 +612,4 @@ void character_destory()
     al_destroy_bitmap(chara.img_move[0]);
     al_destroy_bitmap(chara.img_move[1]);
     al_destroy_sample_instance(chara.atk_Sound);
-
 }
