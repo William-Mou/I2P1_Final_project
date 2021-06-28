@@ -5,6 +5,7 @@ const float FPS = 60.0;
 const int WIDTH = 400;
 const int HEIGHT = 600;
 float play_time;
+float end_time;
 ALLEGRO_EVENT_QUEUE *event_queue = NULL;
 ALLEGRO_TIMER *fps = NULL;
 ALLEGRO_FONT *font = NULL;
@@ -17,3 +18,4 @@ bool close_game = false;
 // 3 = GG
 // 4 = Win
 int window = 1;
+int game_level = 0;

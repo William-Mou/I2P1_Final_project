@@ -28,6 +28,7 @@ typedef struct character
     int hp;
     int atk_count;
     int wait_for_heal;
+    int wait_for_lvup;
     float speedX;
 } Character;
 
@@ -37,13 +38,13 @@ typedef struct item
     int width, height; // the width and height of image
     bool live;         // live this rock ?
     int state;         // the state of character
-    float speedX = 1;
+    float speedX;
     ALLEGRO_BITMAP *img_move[3];
     ALLEGRO_BITMAP *img_atk[2];
     ALLEGRO_SAMPLE_INSTANCE *atk_Sound;
     int anime;      // counting the time of animation
     int anime_time; // indicate how long the animation
-    int hp = 1;
+    int hp;
 } Item;
 
 Character chara;
@@ -53,7 +54,6 @@ ALLEGRO_SAMPLE *sample = NULL;
 ALLEGRO_SAMPLE *starsound = NULL;
 ALLEGRO_SAMPLE *hitsound = NULL;
 ALLEGRO_SAMPLE *sealsound = NULL;
-
 
 void stars_init()
 {
@@ -104,6 +104,7 @@ void rocks_init()
         rocks[rock].height = al_get_bitmap_height(rocks[rock].img_move[0]);
         rocks[rock].x = WIDTH / 2;
         rocks[rock].y = 0;
+        rocks[rock].speedX = 1.5;
         rocks[rock].live = false;
     }
 
@@ -111,8 +112,8 @@ void rocks_init()
     for (int rock = 0; rock < rocks_count; rock++)
     {
         rocks[rock].state = MOVE;
-        rocks[rock].anime = ( rock * 3 )% 30;
-        rocks[rock].anime_time = (((rock * 3) %30 )+ 20)%30;
+        rocks[rock].anime = (rock * 3) % 30;
+        rocks[rock].anime_time = (((rock * 3) % 30) + 20) % 30;
     }
 }
 
@@ -167,6 +168,7 @@ void character_init()
     chara.hp = 5;
     chara.atk_count = 3;
     chara.wait_for_heal = true;
+    chara.wait_for_lvup = false;
     chara.speedX = 1;
     chara.atk_count = 3;
     // initial the animation component
@@ -175,6 +177,9 @@ void character_init()
     chara.anime_time = 30;
 
     font = al_load_ttf_font("./font/pirulen.ttf", 12, 0);
+
+    key_state[ALLEGRO_KEY_D] = false;
+    key_state[ALLEGRO_KEY_A] = false;
 }
 void charater_process(ALLEGRO_EVENT event)
 {
@@ -282,9 +287,9 @@ void stars_update()
                 else
                 {
                     stars[star].live = false;
-                    chara.speedX+=0.2;
+                    chara.speedX += 0.2;
                     al_play_sample_instance(chara.starsound);
-                    chara.speedX+=1;
+                    chara.speedX += 1;
                     if (chara.speedX >= 2)
                     {
                         chara.speedX = 2;
@@ -375,6 +380,7 @@ void charater_update()
 
     if (key_state[ALLEGRO_KEY_A])
     {
+        printf("ALLEGRO_KEY_A\n");
         chara.dir = false;
         chara.x -= base_speed;
         chara.state = MOVE;
@@ -386,6 +392,7 @@ void charater_update()
     }*/
     else if (key_state[ALLEGRO_KEY_D])
     {
+        printf("ALLEGRO_KEY_D\n");
         chara.dir = true;
         chara.x += base_speed;
         chara.state = MOVE;
@@ -406,21 +413,39 @@ void charater_update()
     {
         chara.state = STOP;
     }
-    
-    if ((int)(al_get_time() - play_time) % 10 == 1 && chara.wait_for_heal )
+    // auto heal
+    if ((int)(al_get_time() - play_time) % 10 == 1 && chara.wait_for_heal)
     {
-        printf("1 wait_for_heal %d\n",chara.wait_for_heal);
-        chara.hp ++;
+        chara.hp++;
         chara.wait_for_heal = false;
-        if(chara.hp >= 5)
+        if (chara.hp >= 5)
         {
             chara.hp = 5;
         }
     }
     else if ((int)(al_get_time() - play_time) % 10 == 2)
     {
-        printf("2 wait_for_heal %d\n",chara.wait_for_heal);
         chara.wait_for_heal = true;
+    }
+    // level up
+    if ((int)(al_get_time() - play_time) % 5 == 1 && chara.wait_for_lvup)
+    {
+        game_level++;
+
+        chara.wait_for_lvup = false;
+        if (game_level >= 5)
+        {
+            game_level = 5;
+        }
+        // speed up rock speed
+        for (int rock = rocks_count - 1; rock >= 0; rock--)
+        {
+            rocks[rock].speedX += 0.6;
+        }
+    }
+    else if ((int)(al_get_time() - play_time) % 5 == 2)
+    {
+        chara.wait_for_lvup = true;
     }
 }
 
@@ -429,7 +454,7 @@ void stars_draw()
     // draw star
     for (int star = 0; star < stars_count; star++)
     {
-        
+
         if (stars[star].live)
         {
             //printf("%d %d\n", stars[star].anime, stars[star].anime_time);
@@ -485,6 +510,8 @@ void character_draw()
     sprintf(c, ">> %d <<", (int)(al_get_time() - play_time));
     al_draw_text(font, al_map_rgb(255, 255, 255), WIDTH / 2 - 150, seal_floor + 40, ALLEGRO_ALIGN_CENTRE, "Live Time");
     al_draw_text(font, al_map_rgb(255, 255, 255), WIDTH / 2 - 150, seal_floor + 55, ALLEGRO_ALIGN_CENTRE, c);
+    sprintf(c, "Level - %d", game_level);
+    al_draw_text(font, al_map_rgb(255, 255, 255), WIDTH / 2 - 150, 15, ALLEGRO_ALIGN_CENTRE, c);
 
     if (chara.state == STOP)
     {

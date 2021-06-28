@@ -93,6 +93,7 @@ void game_update()
             // not back menu anymore, therefore destroy it
             menu_destroy();
             // initialize next scene
+            game_level = 0;
             game_scene_init();
             judge_next_window = false;
             play_time = al_get_time();
@@ -101,6 +102,7 @@ void game_update()
         else if (window == 2)
         {
             judge_next_window = false;
+            end_time = al_get_time();
             gg_scene_init();
             window = 3;
         }
@@ -138,7 +140,7 @@ int process_event()
     else if (event.type == ALLEGRO_EVENT_TIMER)
         if (event.timer.source == fps)
             draw = true;
-    game_update();
+    if(draw) game_update();
     return 0;
 }
 void game_draw()
