@@ -20,6 +20,7 @@ extern bool close_game;
 extern float play_time;
 extern float end_time;
 extern int window;
+extern int helpme;
 extern int game_level;
 extern ALLEGRO_EVENT_QUEUE *event_queue;
 extern ALLEGRO_TIMER *fps;

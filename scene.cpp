@@ -3,29 +3,51 @@
 //ALLEGRO_FONT *font = NULL;
 ALLEGRO_BITMAP *background = NULL;
 ALLEGRO_BITMAP *background_game[6];
+ALLEGRO_BITMAP *help_page[3];
+int waitforhelp = false;
 
 // function of menu
 void menu_init()
 {
     font = al_load_ttf_font("./font/pirulen.ttf", 14, 0);
     background = al_load_bitmap("./image/in.png");
+    for (int i = 1; i <= 2; i++)
+    {
+        char temp[50];
+        sprintf(temp, "./image/help%d.jpg", i - 1);
+        help_page[i] = al_load_bitmap(temp);
+    }
 }
 void menu_process(ALLEGRO_EVENT event)
 {
     if (event.type == ALLEGRO_EVENT_KEY_UP)
         if (event.keyboard.keycode == ALLEGRO_KEY_ENTER)
             judge_next_window = true;
+    if (event.type == ALLEGRO_EVENT_KEY_DOWN && event.keyboard.keycode == ALLEGRO_KEY_T)
+    {
+        helpme = (helpme + 1) % 3;
+    }
     if (event.keyboard.keycode == ALLEGRO_KEY_Q)
         close_game = true;
 }
 void menu_draw()
 {
-    al_draw_bitmap(background, 0, 0, 0);
-    //al_clear_to_color(al_map_rgb(100, 100, 100));
-    al_draw_text(font, al_map_rgb(255, 255, 255), WIDTH / 2, HEIGHT / 2 + 220, ALLEGRO_ALIGN_CENTRE, "Press 'Enter' to start");
-    al_draw_rectangle(WIDTH / 2 - 150, 510, WIDTH / 2 + 150, 550, al_map_rgb(255, 255, 255), 0);
-    al_draw_text(font, al_map_rgb(255, 255, 255), WIDTH / 2, HEIGHT / 2 + 220 - 50, ALLEGRO_ALIGN_CENTRE, "Press 'q' to quit");
-    al_draw_rectangle(WIDTH / 2 - 150, 510 - 50, WIDTH / 2 + 150, 550 - 50, al_map_rgb(255, 255, 255), 0);
+    if (helpme)
+    {
+        al_draw_bitmap(help_page[helpme], 0, 0, 0);
+    }
+    else
+    {
+        al_draw_bitmap(background, 0, 0, 0);
+        //al_clear_to_color(al_map_rgb(100, 100, 100));
+
+        al_draw_text(font, al_map_rgb(255, 255, 255), WIDTH / 2, HEIGHT / 2 + 220, ALLEGRO_ALIGN_CENTRE, "Press 'Enter' to start");
+        al_draw_rectangle(WIDTH / 2 - 150, 510, WIDTH / 2 + 150, 550, al_map_rgb(255, 255, 255), 0);
+        al_draw_text(font, al_map_rgb(255, 255, 255), WIDTH / 2, HEIGHT / 2 + 220 - 50, ALLEGRO_ALIGN_CENTRE, "Press 'q' to quit");
+        al_draw_rectangle(WIDTH / 2 - 150, 510 - 50, WIDTH / 2 + 150, 550 - 50, al_map_rgb(255, 255, 255), 0);
+        al_draw_text(font, al_map_rgb(255, 255, 255), WIDTH / 2, HEIGHT / 2 + 220 - 100, ALLEGRO_ALIGN_CENTRE, "Press 't' to help");
+        al_draw_rectangle(WIDTH / 2 - 150, 510 - 100, WIDTH / 2 + 150, 550 - 100, al_map_rgb(255, 255, 255), 0);
+    }
 }
 void menu_destroy()
 {
